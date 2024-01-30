@@ -1,0 +1,45 @@
+name: Generate Directory Listing
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Creat folder
+        run: |
+          mkdir key
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: key
+      
+      - name: Get Python Script
+        run: |
+          wget https://raw.githubusercontent.com/joshbrunty/Indexer/main/indexer.py
+
+      - name: Run Python code
+        run: |
+          python3 indexer.py key
+
+      - name: Change Dir and Commit Then Push
+        run: |
+          echo "Changing directory to key"
+          cd key
+          echo "Printing current directory"
+          pwd
+          echo "Configuring git"
+          git config --global user.email "action@github.com"
+          git config --global user.name "Github Action Bot"
+          echo "Adding files to git"
+          git add .
+          echo "Committing changes to git"
+          git commit -m "[AUTO] Update directory listing"
+          echo "Pushing"
+          git push
